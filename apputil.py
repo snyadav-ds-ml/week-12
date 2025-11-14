@@ -3,10 +3,27 @@ from IPython.display import clear_output
 import time
 import seaborn as sns
 import matplotlib.pyplot as plt
+from scipy.signal import convolve2d
 
 
 def update_board(current_board):
-    # your code here ...
+    kernel = np.array([
+        [1, 1, 1],
+        [1, 0, 1],
+        [1, 1, 1]
+    ])
+
+    # Count live neighbors using convolution
+    neighbors = convolve2d(current_board, kernel, mode="same", boundary="wrap")
+
+    # Apply Conway's Game of Life rules
+    birth = (neighbors == 3) & (current_board == 0)        # Dead -> Alive
+    survive = ((neighbors == 2) | (neighbors == 3)) & (current_board == 1)
+    # Create next board state
+    current_board_board = np.zeros_like(current_board)
+    current_board[birth | survive] = 1
+
+    
     updated_board = current_board
 
     return updated_board
